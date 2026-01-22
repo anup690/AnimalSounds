@@ -152,6 +152,51 @@
             }
         }
 
+        .attributions {
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin-top: 60px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .attributions h2 {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .attributions ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .attributions li {
+            padding: 5px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            line-height: 1.5;
+        }
+
+        .attributions a {
+            color: #ffeb3b;
+            text-decoration: none;
+        }
+
+        .attributions a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -165,6 +210,21 @@
             .animal-emoji {
                 font-size: 4rem;
             }
+
+            .attributions {
+                padding: 15px 10px;
+                font-size: 0.75rem;
+                margin-top: 40px;
+            }
+
+            .attributions ul {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .attributions li {
+                padding: 8px;
+            }
         }
     </style>
 </head>
@@ -172,17 +232,18 @@
     <div class="container">
         <h1>🐾 Animal Sounds 🐾</h1>
         <p class="subtitle">Click on any animal to hear its sound!</p>
-        <div class="info-box">
-            💡 <strong>Note:</strong> Add audio files (MP3) to the <code>audio</code> folder for original sounds. 
-            If audio files are missing, text-to-speech will be used as fallback. 
-            Get free animal sounds from <a href="https://freesound.org" target="_blank">Freesound.org</a> or 
-            <a href="https://www.zapsplat.com" target="_blank">Zapsplat</a>
-        </div>
         
         <div class="animals-grid" id="animalsGrid">
             <!-- Animals will be added here by JavaScript -->
         </div>
     </div>
+
+    <footer class="attributions">
+        <h2>Sound Attributions</h2>
+        <ul id="attributionsList">
+            <!-- Attributions will be loaded here -->
+        </ul>
+    </footer>
 
     <script>
         const animals = [
@@ -329,6 +390,44 @@
                 });
             }
         });
+
+        // Load and display attributions
+        const attributions = [
+            {
+                file: 'Animal Dog Bark 21.wav',
+                author: 'abhisheky948',
+                url: 'https://freesound.org/s/625496/',
+                license: 'Creative Commons 0'
+            },
+            {
+                file: 'Cat.wav',
+                author: 'oliver eye',
+                url: 'https://freesound.org/s/56380/',
+                license: 'Sampling+'
+            }
+        ];
+
+        function displayAttributions() {
+            const attributionsList = document.getElementById('attributionsList');
+            
+            if (attributions.length === 0) {
+                attributionsList.innerHTML = '<li>No sound attributions available.</li>';
+                return;
+            }
+
+            attributions.forEach(attr => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>${attr.file}</strong> by <strong>${attr.author}</strong> -- 
+                    <a href="${attr.url}" target="_blank" rel="noopener noreferrer">${attr.url}</a> -- 
+                    License: ${attr.license}
+                `;
+                attributionsList.appendChild(li);
+            });
+        }
+
+        // Display attributions when page loads
+        displayAttributions();
     </script>
 </body>
 </html>
