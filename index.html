@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animal Sounds</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 0 auto 30px;
+            max-width: 600px;
+            text-align: center;
+            color: white;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-box a {
+            color: #ffeb3b;
+            text-decoration: none;
+        }
+
+        .info-box a:hover {
+            text-decoration: underline;
+        }
+
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .animal-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .animal-card:hover::before {
+            left: 100%;
+        }
+
+        .animal-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .animal-card:active {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .animal-emoji {
+            font-size: 5rem;
+            margin-bottom: 15px;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .animal-card:hover .animal-emoji {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .animal-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .animal-sound {
+            font-size: 1rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .sound-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            animation: pulse 1s infinite;
+        }
+
+        .animal-card.playing .sound-indicator {
+            opacity: 1;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .animals-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .animal-emoji {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐾 Animal Sounds 🐾</h1>
+        <p class="subtitle">Click on any animal to hear its sound!</p>
+        <div class="info-box">
+            💡 <strong>Note:</strong> Add audio files (MP3) to the <code>audio</code> folder for original sounds. 
+            If audio files are missing, text-to-speech will be used as fallback. 
+            Get free animal sounds from <a href="https://freesound.org" target="_blank">Freesound.org</a> or 
+            <a href="https://www.zapsplat.com" target="_blank">Zapsplat</a>
+        </div>
+        
+        <div class="animals-grid" id="animalsGrid">
+            <!-- Animals will be added here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const animals = [
+            { name: 'Dog', emoji: '🐕', sound: 'Woof woof!', audioFile: 'audio/dog.mp3' },
+            { name: 'Cat', emoji: '🐱', sound: 'Meow meow!', audioFile: 'audio/cat.mp3' },
+            { name: 'Cow', emoji: '🐄', sound: 'Moo moo!', audioFile: 'audio/cow.mp3' },
+            { name: 'Pig', emoji: '🐷', sound: 'Oink oink!', audioFile: 'audio/pig.mp3' },
+            { name: 'Rooster', emoji: '🐓', sound: 'Cock-a-doodle-doo!', audioFile: 'audio/rooster.mp3' },
+            { name: 'Sheep', emoji: '🐑', sound: 'Baa baa!', audioFile: 'audio/sheep.mp3' },
+            { name: 'Horse', emoji: '🐴', sound: 'Neigh neigh!', audioFile: 'audio/horse.mp3' },
+            { name: 'Duck', emoji: '🦆', sound: 'Quack quack!', audioFile: 'audio/duck.mp3' },
+            { name: 'Lion', emoji: '🦁', sound: 'Roar!', audioFile: 'audio/lion.mp3' },
+            { name: 'Elephant', emoji: '🐘', sound: 'Trumpet!', audioFile: 'audio/elephant.mp3' },
+            { name: 'Monkey', emoji: '🐵', sound: 'Ooh ooh aah aah!', audioFile: 'audio/monkey.mp3' },
+            { name: 'Owl', emoji: '🦉', sound: 'Hoot hoot!', audioFile: 'audio/owl.mp3' },
+            { name: 'Wolf', emoji: '🐺', sound: 'Awooo!', audioFile: 'audio/wolf.mp3' },
+            { name: 'Frog', emoji: '🐸', sound: 'Ribbit ribbit!', audioFile: 'audio/frog.mp3' },
+            { name: 'Bee', emoji: '🐝', sound: 'Buzz buzz!', audioFile: 'audio/bee.mp3' },
+            { name: 'Snake', emoji: '🐍', sound: 'Hiss hiss!', audioFile: 'audio/snake.mp3' },
+            { name: 'Bear', emoji: '🐻', sound: 'Growl!', audioFile: 'audio/bear.mp3' },
+            { name: 'Tiger', emoji: '🐯', sound: 'Roar!', audioFile: 'audio/tiger.mp3' },
+            { name: 'Chicken', emoji: '🐔', sound: 'Cluck cluck!', audioFile: 'audio/chicken.mp3' },
+            { name: 'Goat', emoji: '🐐', sound: 'Bleat bleat!', audioFile: 'audio/goat.mp3' }
+        ];
+
+        const animalsGrid = document.getElementById('animalsGrid');
+        let currentAudio = null;
+        const synth = window.speechSynthesis;
+        let currentUtterance = null;
+
+        // Create animal cards
+        animals.forEach(animal => {
+            const card = document.createElement('div');
+            card.className = 'animal-card';
+            card.innerHTML = `
+                <div class="sound-indicator"></div>
+                <span class="animal-emoji">${animal.emoji}</span>
+                <div class="animal-name">${animal.name}</div>
+                <div class="animal-sound">${animal.sound}</div>
+            `;
+
+            card.addEventListener('click', () => {
+                playAnimalSound(animal, card);
+            });
+
+            animalsGrid.appendChild(card);
+        });
+
+        function playTextToSpeech(animal, card) {
+            // Stop any currently playing speech
+            synth.cancel();
+            currentUtterance = null;
+
+            // Create and speak the sound
+            const utterance = new SpeechSynthesisUtterance(animal.sound);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.1;
+            utterance.volume = 1;
+            currentUtterance = utterance;
+
+            utterance.onend = () => {
+                card.classList.remove('playing');
+                currentUtterance = null;
+            };
+
+            utterance.onerror = () => {
+                card.classList.remove('playing');
+                currentUtterance = null;
+                console.error(`Text-to-speech error for ${animal.name}`);
+            };
+
+            synth.speak(utterance);
+        }
+
+        function playAnimalSound(animal, card) {
+            // Stop any currently playing audio or speech
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+            if (synth.speaking) {
+                synth.cancel();
+                currentUtterance = null;
+            }
+            
+            document.querySelectorAll('.animal-card').forEach(c => {
+                c.classList.remove('playing');
+            });
+
+            // Add playing class for visual feedback
+            card.classList.add('playing');
+
+            // Create and play the audio file
+            const audio = new Audio(animal.audioFile);
+            currentAudio = audio;
+            
+            audio.volume = 0.7;
+            
+            audio.onended = () => {
+                card.classList.remove('playing');
+                currentAudio = null;
+            };
+
+            audio.onerror = (e) => {
+                // Audio file not found - fallback to text-to-speech
+                console.warn(`Audio file not found for ${animal.name}, using text-to-speech fallback`);
+                currentAudio = null;
+                playTextToSpeech(animal, card);
+            };
+
+            audio.play().catch(error => {
+                // If play fails (file doesn't exist or other error), fallback to text-to-speech
+                console.warn(`Could not play audio for ${animal.name}, using text-to-speech fallback:`, error);
+                currentAudio = null;
+                
+                // Check if it's a network/loading error (file doesn't exist)
+                // or if it's just an autoplay policy issue
+                if (error.name === 'NotAllowedError') {
+                    // Autoplay policy - try to play after user interaction
+                    // But since we're already in a click handler, fallback to TTS
+                    playTextToSpeech(animal, card);
+                } else {
+                    // Other errors (file not found, etc.) - use TTS fallback
+                    playTextToSpeech(animal, card);
+                }
+            });
+        }
+
+        // Stop audio/speech when clicking outside cards
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.animal-card')) {
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    currentAudio = null;
+                }
+                if (synth.speaking) {
+                    synth.cancel();
+                    currentUtterance = null;
+                }
+                document.querySelectorAll('.animal-card').forEach(card => {
+                    card.classList.remove('playing');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
