@@ -197,6 +197,40 @@
             text-decoration: underline;
         }
 
+        .attributions-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .attributions-toggle {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .attributions-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        #attributionsList {
+            max-height: 500px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+
+        #attributionsList.hidden {
+            display: none;
+            opacity: 0;
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -239,8 +273,11 @@
     </div>
 
     <footer class="attributions">
-        <h2>Sound Attributions</h2>
-        <ul id="attributionsList">
+        <div class="attributions-header" id="attributionsHeader">
+            <span class="attributions-toggle">▶</span>
+            <h2 style="margin: 0; display: inline;">Sound Attributions</h2>
+        </div>
+        <ul id="attributionsList" class="hidden">
             <!-- Attributions will be loaded here -->
         </ul>
     </footer>
@@ -470,6 +507,16 @@
 
         // Display attributions when page loads
         displayAttributions();
+
+        // Add toggle functionality
+        const attributionsHeader = document.getElementById('attributionsHeader');
+        const attributionsList = document.getElementById('attributionsList');
+        const attributionsToggle = attributionsHeader.querySelector('.attributions-toggle');
+
+        attributionsHeader.addEventListener('click', () => {
+            attributionsList.classList.toggle('hidden');
+            attributionsToggle.classList.toggle('collapsed');
+        });
     </script>
 </body>
 </html>
